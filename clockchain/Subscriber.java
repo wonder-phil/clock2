@@ -17,18 +17,21 @@ public class Subscriber {
 
 	System.out.println("=== START SUBSCRIBER ===");
     
-	String host = "";
+	String host = "192.168.0.100";
 
 	MqttClient client=new MqttClient("tcp://" + host + ":1883", MqttClient.generateClientId());
 	client.setTimeToWait(100000000);
 	
+	MqttConnectOptions connOpts = new MqttConnectOptions();
+    	connOpts.setKeepAliveInterval(3000000);
+    	client.setTimeToWait(1000*6000);
+	
 	SubscriberCallback subscriberCallBack = new SubscriberCallback();
 	client.setCallback( subscriberCallBack ); // new SimpleMqttCallBack()
-	client.connect();
+	client.connect(connOpts);
 
 	client.subscribe("difficulty");
 	client.subscribe("mine_state");
-	//client.subscribe("new_block"); // ***
 	client.subscribe("last_block");
     }
 
