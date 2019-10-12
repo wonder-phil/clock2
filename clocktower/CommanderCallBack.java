@@ -37,24 +37,26 @@ public class CommanderCallBack implements MqttCallback {
 	
 		String[] topics = arg0.getTopics();
 		for (String t : topics) {
-		    System.out.println(t);
+		    System.out.println("Delivery Complete: "+t);
 		}
     }
 
     @Override
 	public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
 	
+    	/*
 		System.out.println("Message received:\t"+ new String(mqttMessage.getPayload()) );
 		System.out.println("mqttMessage topic: " + topic);
 		
 		System.out.println("Message received !:\t"+ new String(mqttMessage.getPayload()) );
+		*/
 		String value = new String(mqttMessage.getPayload());		    
 		
 		switch(topic) {
 		
 		case "new_block":
-		    newBlock = gson.fromJson(value, Block.class);
-		    System.out.println(value);
+		    //newBlock = gson.fromJson(value, Block.class);
+		    System.out.println(topic + ": " + value);
 		    
 		    SharedData.newBlockFound = true;
 		    SharedData.lastBlock = value;
