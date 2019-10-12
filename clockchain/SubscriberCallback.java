@@ -78,7 +78,7 @@ public class SubscriberCallback implements MqttCallback {
 		    break;
 		        
 		case "mine_state":
-		    if (value.equals(new String("START"))) {
+		    if (value.equals(new String("MINE"))) {
 			
 		    		System.out.println("--->START MINING");
 			
