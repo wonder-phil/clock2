@@ -45,5 +45,8 @@ public class Block {
 			hash = calculateHash();
 		}
 		System.out.println("Block Mined!!! : " + hash);
+		
+		SharedData.previousHash = previousHash;
+		SharedData.newHash = hash;
 	}
 }
