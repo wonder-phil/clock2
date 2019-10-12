@@ -1,6 +1,7 @@
 package clocktower;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -20,15 +21,22 @@ public class Commander {
 	    System.out.println("== START Commander PUBLISHER ==");
 	    
 	    MqttClient client = new MqttClient("tcp://localhost:1883", MqttClient.generateClientId());
-	    client.connect();
+	    MqttConnectOptions connOpts = new MqttConnectOptions();
+	    connOpts.setKeepAliveInterval(3000000);
+	    client.setTimeToWait(1000*6000);
+	    CommanderCallBack commanderCallBack = new CommanderCallBack();
+		client.setCallback( commanderCallBack ); // new SimpleMqttCallBack()
 	    
+	    client.connect(connOpts);
 	    /*
 	     * Listen on new_block topic for any announcements about miners
 	     * finding the next block!
 	     */
-	    CommanderCallBack commanderCallBack = new CommanderCallBack();
-		client.setCallback( commanderCallBack ); // new SimpleMqttCallBack()
 	    client.subscribe("new_block");
+	    
+	    
+	   
+	    
 
 	    /*
 	     * Starting difficulty
@@ -36,15 +44,15 @@ public class Commander {
 	    int difficulty = 4;
 	    
 	    boolean New_Block_Found = false;
-	    int chainLength = 10;
+	    int chainLength = 3;
 	    int i = 0;
 	    
 	    while (i < chainLength) {
 	    
-	    		MqttMessage message = new MqttMessage();
+	    	MqttMessage message = new MqttMessage();
 		    message.setPayload("MINE".getBytes());
 		    client.publish("mine_state", message);
-		    System.out.println("\tMessage '"+ messageString +"' to 'mine_state'");
+		    //System.out.println("\tMessage '"+ messageString +"' to 'mine_state 1'");
 	    	
 		    while (!New_Block_Found) {
 		    	
@@ -53,18 +61,19 @@ public class Commander {
 		    			SharedData.newBlockFound = false;
 		    		}
 		    }
-		    chainLength++;
+		    New_Block_Found =  false;
+		    i++;
 		    
 		    MqttMessage stopMessage = new MqttMessage();
 		    stopMessage.setPayload("STOP".getBytes());
-		    client.publish("mine_state", stopMessage);
-		    System.out.println("\tMessage '"+ messageString +"' to 'mine_state'");
+		    //client.publish("mine_state", stopMessage);
+		    
+		    //System.out.println("\tMessage '"+ messageString +"' to 'mine_state 9'");
 	    }
 
+	    System.out.println("Disconnect");
 	    client.disconnect();
 
 	    System.out.println("== END PUBLISHER ==");
 	  }
-	
-
 }
